@@ -1,11 +1,43 @@
 %%This is a very basic article template.
 %%There is just one section and two subsections.
 \documentclass{article}
-\usepackage{amsmath,amssymb,graphicx}
+
+% PLOS One TEMPLATE
+\usepackage{amsmath,amssymb,graphicx,cite,setspace}
+\doublespacing
+
+% Text layout
+\topmargin 0.0cm
+\oddsidemargin 0.5cm
+\evensidemargin 0.5cm
+\textwidth 16cm 
+\textheight 21cm
+
+\usepackage[labelfont=bf,labelsep=period,justification=raggedright]{caption}
+%%%%%%%
 
 \begin{document}
-
-
+\
+begin{flushleft}
+{\Large
+\textbf{Network Class Superposition Analyses}
+}
+% Insert Author names, affiliations and corresponding author email.
+\\
+Carl A. B. Pearson$^{1,2,\ast}$, 
+Edo Airoldi$^{2}$, 
+Edward Kao$^{2}$,
+Burton Singer$^{1}$, 
+\\
+\bf{1} Emerging Pathogens Institute, University of Florida, Gainesville, FL, USA
+\\
+\bf{2} Statistics, Harvard University, Cambridge, MA, USA
+\\
+$\ast$ E-mail: cap10@ufl.edu
+\end{flushleft}
+% Please keep the abstract between 250 and 300 words
+\section*{Abstract}
+We specify and test a simulation model for identifying small partially observable covert networks embedded in large networks containing many sub-networks that represent a background of clutter. The covert network is planning a coordinated action that requires rapid identification. Instructions and details of the plan are transmitted in fragments from a coordinator, but each fragment, by itself, is insufficient to identify a suspicious plan. We examine a diversity of sequential strategies to be employed by an external observer for sampling message transmission in the large network and passively identifying the target covert network in minimum time. Scenarios where members of the covert network send out decoy signals and where the observer employs deceptive messaging as part of a sequential search strategy are also considered. Depending upon the levels of mutual deception by the covert network and the observer, identification of the full target network may be impossible. We characterize such situations and then indicate the largest sub-network of the covert group that is identifiable with confidence. Such identification is used to signal when action should be taken against a coordinated scheme. More generally, we explore trade-offs between information available to an observer/experimenter and ability to confidently detect suspicious activity. 
 \section{Title}
 
 \subsection{Subtitle}
