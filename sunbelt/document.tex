@@ -37,7 +37,11 @@ $\ast$ E-mail: cap10@ufl.edu
 \end{flushleft}
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
-We specify and test a simulation model for identifying small partially observable covert networks embedded in large networks containing many sub-networks that represent a background of clutter. The covert network is planning a coordinated action that requires rapid identification. Instructions and details of the plan are transmitted in fragments from a coordinator, but each fragment, by itself, is insufficient to identify a suspicious plan. We examine a diversity of sequential strategies to be employed by an external observer for sampling message transmission in the large network and passively identifying the target covert network in minimum time. Scenarios where members of the covert network send out decoy signals and where the observer employs deceptive messaging as part of a sequential search strategy are also considered. Depending upon the levels of mutual deception by the covert network and the observer, identification of the full target network may be impossible. We characterize such situations and then indicate the largest sub-network of the covert group that is identifiable with confidence. Such identification is used to signal when action should be taken against a coordinated scheme. More generally, we explore trade-offs between information available to an observer/experimenter and ability to confidently detect suspicious activity. 
+We specify and demonstrate a graph-based model of populace-wide communications, with an embedded, relatively small module representing a clandestine group.  The members of this group behave similarly to background population, except they also pass messages in furtherance of some plot.  We parametrize this model based on cell phone data sets.
+
+The purpose of this model is to provide a test framework for various methods of detecting these clandestine groups, in real time, before they achieve the intended plot.  We refer to collection of such methods as an {\em Observer}.  We propose various Observer models and measure their performance relative to statistical features of the population, plotters, and their respective communication behaviors.
+
+Finally, we consider the implications of {\em decoy} messages.  In the basic model, we consider missing -- but not misleading or false -- communications.  If, instead, the plotters or the Observer can issue forged messages, the problem becomes substantially more complex.
 \section{Title}
 
 \subsection{Subtitle}
