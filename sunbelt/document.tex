@@ -16,10 +16,15 @@
 \usepackage[labelfont=bf,labelsep=period,justification=raggedright]{caption}
 %%%%%%%
 
+\newcommand{\Hub}[0]{\ensuremath{\mathbf{H}}}
+\newcommand{\C}[1]{\ensuremath{\mathbf{C}_{#1}}}
+
+\bibliographystyle{plos2009}
+
 \begin{document}
 \begin{flushleft}
 {\Large
-\textbf{Network Class Superposition Analyses}
+\textbf{Detecting Covert Groups Embedded in a Population}
 }
 % Insert Author names, affiliations and corresponding author email.
 \\
@@ -43,7 +48,14 @@ The purpose of this model is to provide a test framework for various methods of 
 Finally, we consider the implications of {\em decoy} messages.  In the basic model, we consider missing -- but not misleading or false -- communications.  If, instead, the plotters or the Observer can issue forged messages, the problem becomes substantially more complex.
 
 \section*{Introduction}
-For investigators ranging from anthropologists to law enforcement, the need to identify groups which wish to remain anonymous
+For investigators ranging from anthropologists to law enforcement, the need to identify groups which wish to remain anonymous can be paramount.  In particular, the need for intelligence organizations to identify terrorist cells and defuse their violent plots is a matter of increasing import.  As such, we will use the extant evidence about Salafi jihad networks as our motivating case\cite{sageman}, though we will point out where assumptions can be modified to identify of kinds of groups against a background population. 
+
+\section*{Model}
+We represent a population as a directed graph.  Vertices are individuals, with a directed edge from $V_1$ to $V_2$ if individual 1 initiates contact with individual 2.  Our simulation tool allows for multiple edges from one vertex to another, representing multiple avenues of communication, subject to different levels of monitoring.  In these analyses, we do not exploit having multiple edges between individuals, and only use this capability to distinguish between monitored and unmonitored channels.  
+
+Sageman et al. identified the structure of the Salafi networks to be a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that in turn each connected to several tightly clustered local groups that execute plots.  We refer to these lieutenants as ``hubs'' or the single \Hub\ vertex in our population graphs.  In the practical cases we present, we will consider our terrorist groups to consist of a single hub no higher leadership element.  In addition to general interactions with the population at large, the \Hub\ will have connections to one or more small terrorist clusters; we refer to these clustered groups as \C{n}, enumerating the clusters from 1: \C{1}, \C{2}, \ldots \C{k} when the \Hub\ has $k$ subordinate clusters.
+
+As to the explicit formation of these networks, \cite{sageman} suggests
 
 \subsection{Subtitle}
 
@@ -53,5 +65,7 @@ Plain text.
 
 More plain text.
 
+\newpage
+\bibliography{socialnetworks}
 
 \end{document}
