@@ -59,7 +59,7 @@ As to the explicit formation of these networks, \cite{sageman} suggests
 
 \subsection*{Message Generation}
 
-We use the following simple model for number of communications from the background population.  We activate each of $P_i$'s out degrees with probability $\rho$ -- {\em i.e.}, a person does a binomial sample of their available channels to communicate over.
+We use the following simple model for number of communications from the background population.  We activate each of $P_i$'s out degrees with probability $\rho$ -- {\em i.e.}, a person does a binomial sample of their available channels to communicate via once per time step.  For simplicity, people send a single message to each active channel.  Our simulation implementation, however, is designed to be extensible to accommodate any number of messages, and to provision messages according to more complex rules (e.g., simulating messages with variable durations, preferentially sending to higher probability of sending to people with relatively higher degrees).
 
 \subsection{Subtitle}
 
