@@ -18,6 +18,7 @@
 
 \newcommand{\Hub}[0]{\ensuremath{\mathbf{H}}}
 \newcommand{\C}[1]{\ensuremath{\mathbf{C}_{#1}}}
+\newcommand{\Obs}[0]{\ensuremath{\mathbf{O}}}
 
 \begin{document}
 \begin{flushleft}
@@ -49,23 +50,44 @@ Finally, we consider the implications of {\em decoy} messages.  In the basic mod
 For investigators ranging from anthropologists to law enforcement, the need to identify groups which wish to remain anonymous can be paramount.  In particular, the need for intelligence organizations to identify terrorist cells and defuse their violent plots is a matter of increasing import.  As such, we will use the extant evidence about Salafi jihad networks as our motivating case\cite{sageman}, though we will point out where assumptions can be modified to identify of kinds of groups against a background population. 
 
 \section*{Model}
-We represent a population as a directed graph.  Vertices are people ($\mathbf{P}=\{P_1, P_2, \ldots P_k\}, n(\mathbf{P})=k$), with a directed edge from $P_i$ to $P_j$ if person $i$ initiates contact with person $j$.  Our simulation tool allows for multiple edges from one vertex to another, representing multiple avenues of communication, subject to different levels of monitoring.  In these analyses, we do not exploit having multiple edges between individuals, and only use this capability to distinguish between monitored and unmonitored channels.  
+Sageman et al. identified the structure of the Salafi networks to be a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that in turn each connected to several tightly clustered local groups that execute plots.  These groups, however, are embedded in a web of other individuals.
 
-Sageman et al. identified the structure of the Salafi networks to be a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that in turn each connected to several tightly clustered local groups that execute plots.  We refer to these lieutenants as ``hubs'' or the single \Hub\ vertex in our population graphs.  In the practical cases we present, we will consider our terrorist groups to consist of a single hub no higher leadership element.  In addition to general interactions with the population at large, the \Hub\ will have connections to one or more small terrorist clusters; we refer to these clustered groups as \C{n}, enumerating the clusters from 1: \C{1}, \C{2}, \ldots \C{k} when the \Hub\ has $k$ subordinate clusters.
+We represent a population as a directed graph.  Vertices are people ($\mathbf{P}=\{P_1, P_2, \ldots P_k\}, n(\mathbf{P})=k$), with a directed edge from $P_i$ to $P_j$ if person $i$ initiates contact with person $j$.
+
+We divide this population into three types:
+\begin{enumerate}
+\item the background population,
+\item 
+\end{enumerate}
+
+%  Our simulation tool allows for multiple edges from one vertex to another, representing multiple avenues of communication, subject to different levels of monitoring.  In these analyses, we do not exploit having multiple edges between individuals, and only use this capability to distinguish between monitored and unmonitored channels.  
+
+We refer to these lieutenants as ``hubs'' or the single \Hub\ vertex in our population graphs.  In the practical cases we present, we will consider our terrorist groups to consist of a single hub no higher leadership element.  In addition to general interactions with the population at large, the \Hub\ will have connections to one or more small terrorist clusters; we refer to these clustered groups as \C{n}, enumerating the clusters from 1: \C{1}, \C{2}, \ldots \C{k} when the \Hub\ has $k$ subordinate clusters.
 
 As to the explicit formation of these networks, \cite{sageman} suggests
 
+\subsection*{Graph Structure}
 
+The non-covert population organizes into modules, with scattered random connections between the modules.  \Hub\ exists embedded in this background population, interacting with it.
 
 \subsection*{Message Generation}
+\Obs\ understands the network by monitoring message traffic between individuals.  For this analysis, we consider messages with binary state only: the message is either ``good'' or ``bad''.
 
-We use the following simple model for number of communications from the background population.  We activate each of $P_i$'s out degrees with probability $\rho$ -- {\em i.e.}, a person does a binomial sample of their available channels to communicate via once per time step.  For simplicity, people send a single message to each active channel.  Our simulation implementation, however, is designed to be extensible to accommodate any number of messages, and to provision messages according to more complex rules (e.g., simulating messages with variable durations, preferentially sending to higher probability of sending to people with relatively higher degrees).
+We use a simple model for generating these messages between the background population.  During each iteration, for each individual $P_i\notin\C{n}\cap\Hub$:
+\begin{itemize}
+\item $P_i$ activates its out degrees with probability $\rho_m$ -- {\em i.e.}, a person does a binomial sample of the available channels,
+\item $P_i$ sends a single message to each active channel, and
+\item this message is ``bad'' with a low probability $\rho_b$. 
+\end{itemize}
+%
+The \Hub\ and \C{n} have their own messaging behavior:
+%
+\begin{itemize}
+\item \Hub\ behaves like a typical module member, but never sends bad messages, except to the \C{n} at a low rate $h_b$, and
+\item the members of \C{k} will a send single ``good'' message per iteration, with low probability $c$, to another member of \C{k}.  If any member of a \C{k} received a ``bad'' message from \Hub\ in the previous interval, these messages will instead be ``bad''.  Additionally, when sending a ``bad'' message, members of a \C{k} may instead randomly send the message outside their cluster with probability $c_o$, to a member of one of the other \C{j} with uniform probability.
+\end{itemize}
 
-The \Hub\ and \C{n} have their own messaging behavior.
-
-\subsection{Subtitle}
-
-Plain text.
+Finally, all of $\mathbf{P}\cap\C{n}\cap\Hub$ may send a message with probability $\rho_r$ to any other member of the network (with uniform probability).  For all types of senders, these have a low probability $b_r$ of being ``bad'' messages.
 
 \subsection{Another subtitle}
 
