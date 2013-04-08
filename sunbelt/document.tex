@@ -59,16 +59,25 @@ In the following sections, we provide the details of generating the groups, asse
 \subsection*{The Background Population, the $P_{n}\in\mathbf{P}$}
 The background population comprises multiple distinct communities, bridged by random connections.  Individuals are members of multiple communities, divided among multiple dimensions -- e.g., family, religion, work.  Most of these connections are a bi-directional.
 
-\bf{TODO} which community formation algorithm?
+{\bf TODO} which community formation algorithm?
 
 \subsection*{A Lieutenant, the \Hub\ Vertex}
-\Hub\ has community affiliations like most members of the population.  Indeed, \Hub\ is a member of more communities than the typical individual in the population, given the need to gather information, identify recruits, etc.  Finally, \Hub\ is completely connected to the members of the clusters, but those connections are directed from \Hub\ to the cluster members.
+\Hub\ has community affiliations like most members of the population.  However, \Hub\ is a member of more communities than the typical individual in the population given the need to gather information, identify recruits, etc.  Finally, \Hub\ is completely connected to the members of the clusters, but those connections are only directed from \Hub\ to the cluster members.
+
+{\bf TODO} algorithm for \Hub\ in communities?  Draft: pick a larger than typical number of communities of membership, then add \Hub\ to that that many communities.  Possibly preferentially to certain community types.
 
 \subsection*{The Subordinates, $C_i\in\mathbf{C}$}
+Each $C_i$ is a bi-direction clique, comprising a small number of individuals.  In our simulations, we consider only triads, leaving the features of larger groups (e.g., more opportunities to violate communication tactics) to represented by other model parameters.  The $C_i$ have no other structured communication channels.
 
 \subsection*{Integrating $\mathbf{P}\cup\Hub\cup\mathbf{C}$}
+{\bf TODO} need this section?  the random interconnection of background population should be accomplished by multiple-community formation algorithm.
 
 \subsection*{Message Passing Behavior}
+\Obs\ understands the network by monitoring message traffic between individuals.  For this analysis, we consider messages with binary state only: the message is either ``good'' or ``bad''.
+
+The background population generate these messages according to simplifying assumptions about the real world: they all their community memberships equally, their messaging activity occupies an inconsequential period of time during any iteration, and the iteration time is such that multiple real communicate events (e.g., a few calls between individuals) can be treated as a single continuous event.  Thus, during each iteration, each individual $P_i\notin\C{n}\cap\Hub$ (1) activates its out degrees with probability $\rho_m$ -- {\em i.e.}, a person does a binomial sample of the available channels -- and then (2), $P_i$ sends a single message to each active channel.  These messages are ``bad'' with a low probability $p_b$.
+
+{\bf TODO} equations for $P_i$ outgoing messages, probability of sending a bad one.
 
 \section*{Observers, \Obs}
 
@@ -90,23 +99,9 @@ The background population comprises multiple distinct communities, bridged by ra
 
 %  Our simulation tool allows for multiple edges from one vertex to another, representing multiple avenues of communication, subject to different levels of monitoring.  In these analyses, we do not exploit having multiple edges between individuals, and only use this capability to distinguish between monitored and unmonitored channels.  
 
-We refer to these lieutenants as ``hubs'' or the single \Hub\ vertex in our population graphs.  In the practical cases we present, we will consider our terrorist groups to consist of a single hub no higher leadership element.  In addition to general interactions with the population at large, the \Hub\ will have connections to one or more small terrorist clusters; we refer to these clustered groups as \C{n}, enumerating the clusters from 1: \C{1}, \C{2}, \ldots \C{k} when the \Hub\ has $k$ subordinate clusters.
-
-As to the explicit formation of these networks, \cite{sageman} suggests
-
-\subsection*{Graph Structure}
-
-The non-covert population organizes into modules, with scattered random connections between the modules.  \Hub\ exists embedded in this background population, interacting with it.
-
 \subsection*{Message Generation}
-\Obs\ understands the network by monitoring message traffic between individuals.  For this analysis, we consider messages with binary state only: the message is either ``good'' or ``bad''.
 
-We use a simple model for generating these messages between the background population.  During each iteration, for each individual $P_i\notin\C{n}\cap\Hub$:
-\begin{itemize}
-\item $P_i$ activates its out degrees with probability $\rho_m$ -- {\em i.e.}, a person does a binomial sample of the available channels,
-\item $P_i$ sends a single message to each active channel, and
-\item this message is ``bad'' with a low probability $\rho_b$. 
-\end{itemize}
+We use a simple model for 
 %
 The \Hub\ and \C{n} have their own messaging behavior:
 %
@@ -116,10 +111,6 @@ The \Hub\ and \C{n} have their own messaging behavior:
 \end{itemize}
 
 Finally, all of $\mathbf{P}\cap\C{n}\cap\Hub$ may send a message with probability $\rho_r$ to any other member of the network (with uniform probability).  For all types of senders, these have a low probability $b_r$ of being ``bad'' messages.
-
-\subsection{Another subtitle}
-
-More plain text.
 
 \newpage
 \bibliographystyle{plos2009}
