@@ -79,7 +79,26 @@ The background population generate these messages according to simplifying assum
 
 {\bf TODO} equations for $P_i$ outgoing messages, probability of sending a bad one.
 
-\section*{Observers, \Obs}
+Like the $P_i$, \Hub\ abides by the simplifying assumptions about the real world, with one small perturbation.  \Hub\ is a member of many communities, and strategically cultivates and exploits these memberships.  To model that, \Hub\ will send at least one message to every to each community it is in, and possibly more.  That is, for each community \Hub\ is a member of, \Hub\ will send $1+{n\choose k_i-1}$ messages, where $k_i$ is the number of connections \Hub\ has within that community.  These messages will always be ``good'' messages.
+
+Any given iteration, \Hub\ may also issue directives to the subordinate groups.  These messages will always be ``bad'' messages, but (1) are sent with low probability $h_b$ and (2) are sent to only one member of any particular $C_i$.
+
+{\bf TODO} equations for \Hub\ outgoing messages, probability of sending a bad one.
+
+The members of each $C_i$ are largely silent.  Each iteration, they may communicate with one other member of their $C_i$ (chosen uniformly) with low probability $c_m$; these messages have a relatively high probability of being ``bad'', $c_b$.  If any member of the clique received a message from \Hub\ the previous iteration, one member (chosen uniformly) may communicate a bad message to another $C_j$ (which $j$ chosen uniformly, which member of $C_j$ chosen uniformly) with probability $c_o$.  This models the largely untraceable communication among members in a $C_i$ and between $C_j$'s.
+
+{\bf TODO} equations for $C_i$ outgoing messages.
+
+Finally, there is a low probability $\rho_r$ of an individual sending a random message to an individual they do {\em not} have an outgoing link to each iteration. For each individual that will send one of these messages, they recipient is selected uniformly from the candidate recipients.
+
+{\bf TODO} equation; also consider: more likely to send to people with a link to them?
+
+\section*{Observers}
+A particular \Obs, for a particular scenario, only observes the message traffic as it comes along.  \Obs\ does directly see any structural features of the population graph, nor does \Obs\ know certainly when messages are among normal individuals or the plotters, let alone within a particular community.  Different \Obs's may make different assumptions about these features, and use those features to target their monitoring and even adjust their beliefs about those features according to the message traffic that occurs.
+
+For all of the strategies we consider, our \Obs's make some limiting assumptions consistent with those we put in the model, specifically that there is a single \Hub, connected to multiple $C_i$.  The \Obs\ knows that both the plotters and background population can send ``bad'' messages.
+
+Additionally, \Obs\ makes other assumptions about the structure of background communities, the messaging rate of various parties, and other features of the graph.  These assumptions are not necessarily correct, but \Obs\ still makes them as starting guess.
 
 \subsection*{Strategy 1}
 
@@ -87,30 +106,22 @@ The background population generate these messages according to simplifying assum
 
 \subsection*{Strategy n}
 
-\section*{Results}
+\section*{Results Ignoring Decoys}
+
+\section*{Considering Decoys}
+There are two fundamental sorts of deception available in the model: deception by $\Hub\cap\mathbf{C}$ and deception by \Obs.  Deception by the plotters includes sending ``bad'' messages to the background, and, assuming the background is sympathetic, having those bad messages echoed along. Or forging bad messages between members of the background.  Deception by \Obs\ entails forging messages from a false \Hub, in hopes of hitting one of the $C_i$ and seeing them respond accordingly.
 
 \section*{Discussion}
 
 \section*{Appendices}
 
 \subsection*{Parametrizing the Graph}
+{\bf TODO} a-b-c calculation to tune to afghan cell phone data or other parameter studies?
 
 \subsection*{Implementation, the DarkNet API, and Extension}
+{\bf TODO} description of software package.  where to get source, how to write extensions.  Propose some extensions: give individuals a vocabulary assigned from a distribution, have them randomly assemble messages from the vocabulary, some ``words'' of which are ``bad''.  Allow multiple communication channel types.  Include a community dimension and have ``within community X'' as part of the message information.
 
 %  Our simulation tool allows for multiple edges from one vertex to another, representing multiple avenues of communication, subject to different levels of monitoring.  In these analyses, we do not exploit having multiple edges between individuals, and only use this capability to distinguish between monitored and unmonitored channels.  
-
-\subsection*{Message Generation}
-
-We use a simple model for 
-%
-The \Hub\ and \C{n} have their own messaging behavior:
-%
-\begin{itemize}
-\item \Hub\ behaves like a typical module member, but never sends bad messages, except to the \C{n} at a low rate $h_b$, and
-\item the members of \C{k} will a send single ``good'' message per iteration, with low probability $c$, to another member of \C{k}.  If any member of a \C{k} received a ``bad'' message from \Hub\ in the previous interval, these messages will instead be ``bad''.  Additionally, when sending a ``bad'' message, members of a \C{k} may instead randomly send the message outside their cluster with probability $c_o$, to a member of one of the other \C{j} with uniform probability.
-\end{itemize}
-
-Finally, all of $\mathbf{P}\cap\C{n}\cap\Hub$ may send a message with probability $\rho_r$ to any other member of the network (with uniform probability).  For all types of senders, these have a low probability $b_r$ of being ``bad'' messages.
 
 \newpage
 \bibliographystyle{plos2009}
