@@ -57,20 +57,19 @@ To represent the three components -- the background population, the lieutenants,
 In the following sections, we provide the details of generating the groups, assembling them into a whole, and finally their communication behavior.  For our simulations, we focus on population that contains a single lieutenant coordinating multiple subordinate clusters, though we acknowledge that more realistic scenarios would typically entail tracking multiple plotting groups.
 
 \subsection*{The Background Population, the $P_{n}\in\mathbf{P}$}
-The background population comprises multiple distinct communities, bridged by random connections.  Individuals are members of multiple communities, divided among multiple dimensions -- e.g., family, religion, work.  Most of these connections are a bi-directional.
+Individuals in the background population are members of multiple communities, divided among multiple dimensions -- e.g., family, religion, work.  Most of these connections are a bi-directional.
 
-{\bf TODO} which community formation algorithm?
+For our simulation, we assume that each of the background individuals is a member of three independent community ``dimensions''\footnote{{\bf TODO: could this assumption be informed? I'm making it for simplicity, but I think its plausible that someone has done research about people's group identities, the extent to which those are non-indepedent, and concluded about the range of independent groups a person can be called a member of}}.  We form each of these dimensions by generating community structures according to a community size distribution and formation algorithm, until the total number of vertices in a dimension equals the total population.  We then randomly assign individuals to one single community in each dimension, and then ``flatten'' the resulting graph by merging any edges that are duplicated across dimensions.
+
+To form a community, we sample the size distribution to determine community size.  We then form completely connected triads up to that size, adding the potentially remaining 1 or 2 vertices to triad (or two) and form a completely connected quartet.  We then take these cliques 3 at a time, and treating them like vertices, form more completely connected triads by choosing a random member for each clique to bidirectionally connect (left over cliques are treated similarly to left over vertices).  This joining proceeds iteratively until there are a fewer than three objects at a scale to connect.  We then consider each unjoined pair of vertices and form a directed link with low probability $r_p$.
 
 \subsection*{A Lieutenant, the \Hub\ Vertex}
 \Hub\ has community affiliations like most members of the population.  However, \Hub\ is a member of more communities than the typical individual in the population given the need to gather information, identify recruits, etc.  Finally, \Hub\ is completely connected to the members of the clusters, but those connections are only directed from \Hub\ to the cluster members.
 
-{\bf TODO} algorithm for \Hub\ in communities?  Draft: pick a larger than typical number of communities of membership, then add \Hub\ to that that many communities.  Possibly preferentially to certain community types.
+\Hub\ is added to a number of communities sampled from a distribution and then randomly connected with members in that community with probability $c_o$ (to that member) and $c_i$ (from that member).  This distribution and these probabilities should be set relative to background population connection structures such that the \Hub\ is a high outlier for both the in and out degree distributions of the population.\footnote{{\bf TODO what distribution? math to enforce prob limits?}}
 
 \subsection*{The Subordinates, $C_i\in\mathbf{C}$}
-Each $C_i$ is a bi-direction clique, comprising a small number of individuals.  In our simulations, we consider only triads, leaving the features of larger groups (e.g., more opportunities to violate communication tactics) to represented by other model parameters.  The $C_i$ have no other structured communication channels.
-
-\subsection*{Integrating $\mathbf{P}\cup\Hub\cup\mathbf{C}$}
-{\bf TODO} need this section?  the random interconnection of background population should be accomplished by multiple-community formation algorithm.
+Each $C_i$ is a bi-direction clique, comprising a small number of individuals.  In our simulations, we sample from a binomial clique size.  The $C_i$ have no other structured communication channels.
 
 \subsection*{Message Passing Behavior}
 \Obs\ understands the network by monitoring message traffic between individuals.  For this analysis, we consider messages with binary state only: the message is either ``good'' or ``bad''.
@@ -91,7 +90,7 @@ The members of each $C_i$ are largely silent.  Each iteration, they may communic
 
 Finally, there is a low probability $\rho_r$ of an individual sending a random message to an individual they do {\em not} have an outgoing link to each iteration. For each individual that will send one of these messages, they recipient is selected uniformly from the candidate recipients.
 
-{\bf TODO} equation; also consider: more likely to send to people with a link to them?
+{\bf TODO} equation
 
 \section*{Observers}
 A particular \Obs, for a particular scenario, only observes the message traffic as it comes along.  \Obs\ does directly see any structural features of the population graph, nor does \Obs\ know certainly when messages are among normal individuals or the plotters, let alone within a particular community.  Different \Obs's may make different assumptions about these features, and use those features to target their monitoring and even adjust their beliefs about those features according to the message traffic that occurs.
