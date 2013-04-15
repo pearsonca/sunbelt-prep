@@ -27,7 +27,7 @@
 }
 % Insert Author names, affiliations and corresponding author email.
 \\
-Carl A. B. Pearson$^{1,2,\ast}$, 
+Carl A. B. Pearson$^{1,\ast}$, 
 Edo Airoldi$^{2}$, 
 Edward Kao$^{2}$,
 Burton Singer$^{1}$, 
@@ -40,19 +40,19 @@ $\ast$ E-mail: cap10@ufl.edu
 \end{flushleft}
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
-We specify a graph-based model of populace-wide communications, with an embedded, relatively small module representing a clandestine group.  The members of this group behave similarly to background population, except they also pass special messages in furtherance of a plan.  We parametrize this model based on cell phone data sets.
+We specify a graph-based model of populace-wide communications, with an embedded, relatively small module representing a clandestine group.  The members of this group behave similarly to the background population, except that they also pass special messages in furtherance of a plan.  We parametrize this model based on cell phone data sets.
 
 Using simulated message traffic on this network, we benchmark various strategies, a particular set of which we call an {\em Observer}, for detecting the clandestine group.  We measure several Observers for their performance in terms of detection rate and accuracy measures (e.g, Receiver Operator Characteristic) relative to statistical features of the general population, the clandestine group, and their respective communication behaviors.
 
 Finally, we consider the implications of {\em forged} messages.  In the basic model, we consider incomplete information about the communications, but the available information is always accurate.  In this extension, we allow the Observer and the clandestine group to forge messages.  We again measure various Observer performance traits relative to properties of the observed network.
 
 \section*{Introduction}
-For investigators ranging from anthropologists to law enforcement, the need to identify groups which wish to remain anonymous can be paramount.  In particular, the need for intelligence organizations to identify terrorist cells and defuse their violent plots is a matter of increasing import.  As such, we will use the extant evidence about Salafi jihad networks as our motivating case\cite{sageman}, though we will point out where assumptions can be modified to identify of kinds of groups against a background population. 
+For investigators ranging from anthropologists to law enforcement, the need to identify groups which wish to remain anonymous can be paramount.  In particular, the need for intelligence organizations to identify terrorist cells and defuse their violent plots is a matter of increasing import.  As such, we will use the extant evidence about Salafi jihad networks as our motivating case\cite{sageman}, though we will point out where assumptions can be modified to identify different kinds of groups against a background population. 
 
 \section*{Model}
-Sageman, Qin, et al. identified the structure of the Salafi networks to be a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
+Sageman, Qin, et al. identified the structure of the Salafi networks to comprise a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
 
-To represent the three components -- the background population, the lieutenants, the subordinate clusters -- we generate the graph from clusters with the features of each of these.  Vertices are people ($\mathbf{P}=\{P_1, P_2, \ldots P_k\}, n(\mathbf{P})=k$), with a directed edge from $P_i$ to $P_j$ if person $i$ initiates communication with person $j$.  Communication takes the form of messages of a simplified sort: a binary ``good'' or ``bad'' signal.
+To represent the three components -- the background population, the lieutenants, the subordinate clusters -- we generate the graph from clusters with the features of each of these.  Vertices are people ($\mathbf{P}=\{P_1, P_2, \ldots P_k\}, n(\mathbf{P})=k$), with a directed edge from $P_i$ to $P_j$ if person $i$ initiates communication with person $j$.  Communication takes the form of messages of a simplified sort: a binary ``good'' or ``bad'' signal.  Full instructions from a lieutenant to the subordinate groups that will implement a terrorist event consist of a cumulation of several “bad” signals. Additionally, “bad” signals can be transmitted by anyone in the general population, though these play no role in the plot.
 
 In the following sections, we provide the details of generating the groups, assembling them into a whole, and finally their communication behavior.  For our simulations, we focus on a population that contains a single lieutenant coordinating multiple subordinate clusters, though we acknowledge that more realistic scenarios would typically entail tracking multiple plotting groups.
 
@@ -61,7 +61,7 @@ Individuals in the background population are members of multiple communities, di
 
 For our simulation, we assume that each of the background individuals is a member of three independent community ``dimensions''\footnote{{\bf TODO: could this assumption be informed? I'm making it for simplicity, but I think its plausible that someone has done research about people's group identities, the extent to which those are non-indepedent, and concluded about the range of independent groups a person can be called a member of}}.  We form each of these dimensions by generating community structures according to a community size distribution and formation algorithm, until the total number of vertices in a dimension equals the total population.  We then randomly assign individuals to one single community in each dimension, and then ``flatten'' the resulting graph by merging any edges that are duplicated across dimensions.
 
-To form a community, we sample the size distribution to determine community size.  We then form completely connected triads up to that size, adding the potentially remaining 1 or 2 vertices to triad (or two) and form a completely connected quartet.  We then take these cliques 3 at a time, and treating them like vertices, form more completely connected triads by choosing a random member for each clique to bidirectionally connect (left over cliques are treated similarly to left over vertices).  This joining proceeds iteratively until there are a fewer than three objects at a scale to connect.  We then consider each unjoined pair of vertices and form a directed link with low probability $r_p$.
+To form a community, we sample the size distribution to determine community size.  We then form completely connected triads up to that size, adding the potentially remaining 1 or 2 vertices to triad (or two) and forming a completely connected quartet.  We then take these cliques 3 at a time, and treating them like vertices, form more completely connected triads by choosing a random member for each clique to bidirectionally connect (left over cliques are treated similarly to left over vertices).  This joining proceeds iteratively until there are fewer than three objects at a scale to connect.  We then consider each unjoined pair of vertices and form a directed link with low probability $r_p$.
 
 \subsection*{A Lieutenant, the \Hub\ Vertex}
 \Hub\ has community affiliations like most members of the population.  However, \Hub\ is a member of more communities than the typical individual in the population given the need to gather information, identify recruits, etc.  Finally, \Hub\ is completely connected to the members of the clusters, but those connections are only directed from \Hub\ to the cluster members.
@@ -74,7 +74,7 @@ Each $C_i$ is a bi-direction clique, comprising a small number of individuals.  
 \subsection*{Message Passing Behavior}
 \Obs\ understands the network by monitoring message traffic between individuals.  For this analysis, we consider messages with binary state only: the message is either ``good'' or ``bad''.
 
-The background population generate these messages according to simplifying assumptions about the real world: they have no preference for their community memberships beyond how many members of a community they connect to, their messaging activity occupies an inconsequential period of time during any iteration, and the iteration time is such that multiple real communicate events (e.g., a few calls between individuals) can be treated as a single continuous event.  Thus, during each iteration, each individual $P_i\notin\C{n}\cap\Hub$ (1) activates its out degrees with probability $\rho_m$ -- {\em i.e.}, a person does a binomial sample of the available channels -- and then (2), $P_i$ sends a single message to each active channel.  These messages are ``bad'' with a low probability $p_b$.
+The background population generate these messages according to simplifying assumptions about the real world: they have no preference for their community memberships beyond how many members of a community they connect to, their messaging activity occupies an inconsequential period of time during any iteration, and the iteration time is such that multiple real events (e.g., a few calls between individuals) can be treated as a single continuous event.  Thus, during each iteration, each individual $P_i\notin\C{n}\cap\Hub$ (1) activates its out degrees with probability $\rho_m$ -- {\em i.e.}, a person does a binomial sample of the available channels -- and then (2), $P_i$ sends a single message to each active channel.  These messages are ``bad'' with a low probability $p_b$.
 
 {\bf TODO} equations for $P_i$ outgoing messages, probability of sending a bad one.
 
