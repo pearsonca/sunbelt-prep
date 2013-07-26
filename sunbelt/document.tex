@@ -4,14 +4,16 @@
 
 % PLOS One TEMPLATE
 \usepackage{amsmath,amssymb,graphicx,cite,setspace}
-\doublespacing
+\usepackage[textwidth=1.75in]{todonotes}
+\usepackage[total={6in,9.5in},top=0.5in,left=0.5in,includefoot]{geometry}
+%\doublespacing
 
 % Text layout
-\topmargin 0.0cm
-\oddsidemargin 0.5cm
-\evensidemargin 0.5cm
-\textwidth 16cm 
-\textheight 21cm
+%\topmargin 0.0cm
+%\oddsidemargin 0.5cm
+%\evensidemargin 0.5cm
+%\textwidth 16cm 
+%\textheight 21cm
 
 \usepackage[labelfont=bf,labelsep=period,justification=raggedright]{caption}
 %%%%%%%
@@ -19,6 +21,7 @@
 \newcommand{\Hub}[0]{\ensuremath{\mathbf{H}}}
 \newcommand{\C}[1]{\ensuremath{\mathbf{C}_{#1}}}
 \newcommand{\Obs}[0]{\ensuremath{\mathbf{O}}}
+\newcommand{\todoCP}[1]{\todo{CP, #1}}
 
 \begin{document}
 \begin{flushleft}
@@ -40,17 +43,27 @@ $\ast$ E-mail: cap10@ufl.edu
 \end{flushleft}
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
-We specify a graph-based model of populace-wide communications, with an embedded, relatively small module representing a clandestine group.  The members of this group behave similarly to the background population, except that they also pass special messages in furtherance of a plan.  We parametrize this model based on cell phone data sets.
+We outline the problem of testing and validating strategies for detecting clandestine groups with network approaches.  As practical example, we specify a graph-based model of populace-wide communications, with an embedded, relatively small module representing a clandestine group.  The members of this group behave similarly to the background population, except that they also pass special messages in furtherance of a plan.\todoCP{{\em would like to say:} We parametrize this model based on cell phone data sets.}
 
-Using simulated message traffic on this network, we benchmark various strategies, a particular set of which we call an {\em Observer}, for detecting the clandestine group.  We measure several Observers for their performance in terms of detection rate and accuracy measures (e.g, Receiver Operator Characteristic) relative to statistical features of the general population, the clandestine group, and their respective communication behaviors.
+Using simulated message traffic on this network and various detection strategies, we demonstrate application of various traditional performance measures, e.g. Receiver Operator Characteristic.  We also extend these measures to have bands based on model uncertainty derived from parameter uncertainty (e.g., in the features of the general population, the clandestine group, their respective communication behaviors).
 
-Finally, we consider the implications of {\em forged} messages.  In the basic model, we consider incomplete information about the communications, but the available information is always accurate.  In this extension, we allow the Observer and the clandestine group to forge messages.  We again measure various Observer performance traits relative to properties of the observed network.
+\todoCP{{\em I think not for this round, but maybe:} Finally, we consider the implications of {\em forged} messages.  In the basic model, we consider incomplete information about the communications, but the available information is always accurate.  In this extension, we allow the Observer and the clandestine group to forge messages.  We again measure various Observer performance traits relative to properties of the observed network.}
 
 \section*{Introduction}
-For investigators ranging from anthropologists to law enforcement, the need to identify groups which wish to remain anonymous can be paramount.  In particular, the need for intelligence organizations to identify terrorist cells and defuse their violent plots is a matter of increasing import.  As such, we will use the extant evidence about Salafi jihad networks as our motivating case\cite{sageman}, though we will point out where assumptions can be modified to identify different kinds of groups against a background population. 
+For investigators ranging from anthropologists to law enforcement, the need to identify groups which wish to remain anonymous is be paramount.  In particular, the need for intelligence organizations to identify terrorist cells and defuse their violent plots is a matter of increasing import.
+
+These categorization efforts are fed on a diet of so-called ``Big Data'' -- amounts of data so large, turning over at a rate so fast, that human analyst team cannot pragmatically digest it directly.  Hence, the need for some computer-based, heuristic filtration.  We avoid using ``algorithmic'' at this point; that would imply a false certainty about patterns in the phenomena, and the stability of those phenomena, associated with these investigations.
+
+As such, what these filters call for is testing and validation.  Calling field testing ``problematic'' seems like a gross understatement; reference ``truth'' is either non-existent or deceptive, and running experiments has dangerous side effects.  Even making use of intensely studied historical events is problematic: these offer no way to consider tactical and strategic innovations, assuming the historical data are even accurate.
+
+Generating synthetic data seems like the obvious alternative.  It allows for comparison across detection strategies, experimentation with the clandestine group's tactics, forecasting of risks and tradeoffs in a way that allows uncertainties, and in general providing a framework for situational assessment.  However, such a tool has subtle downsides; if one believes a particular strategy is effective -- perhaps even with reasonable evidence for a particular time and situation -- the would be a natural tendency to ``adjust'' scenarios until they indicated the success of strategy.
+
+In the following sections, we layout the uses and abuses of such a framework.  What makes for useful synthetic data sets? What are the appropriate measures for detection strategies on them?
+
+As such, we will use the extant evidence about Salafi jihad networks as our motivating case\cite{sageman}, though we will point out where assumptions can be modified to identify different kinds of groups against a background population, since the tactics of these organizations are constantly evolving. 
 
 \section*{Model}
-Sageman, Qin, et al. identified the structure of the Salafi networks to comprise a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
+Sageman, Qin, et al. describe the structure of the Salafi networks as comprising a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups -- terrorist cells -- that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
 
 To represent the three components -- the background population, the lieutenants, the subordinate clusters -- we generate the graph from clusters with the features of each of these.  Vertices are people ($\mathbf{P}=\{P_1, P_2, \ldots P_k\}, n(\mathbf{P})=k$), with a directed edge from $P_i$ to $P_j$ if person $i$ initiates communication with person $j$.  Communication takes the form of messages of a simplified sort: a binary ``good'' or ``bad'' signal.  Full instructions from a lieutenant to the subordinate groups that will implement a terrorist event consist of a cumulation of several “bad” signals. Additionally, “bad” signals can be transmitted by anyone in the general population, though these play no role in the plot.
 
@@ -59,7 +72,7 @@ In the following sections, we provide the details of generating the groups, asse
 \subsection*{The Background Population, the $P_{n}\in\mathbf{P}$}
 Individuals in the background population are members of multiple communities, divided among multiple dimensions -- e.g., family, religion, work.  Most of these connections are bi-directional.
 
-For our simulation, we assume that each of the background individuals is a member of three independent community ``dimensions''\footnote{{\bf TODO: could this assumption be informed? I'm making it for simplicity, but I think its plausible that someone has done research about people's group identities, the extent to which those are non-indepedent, and concluded about the range of independent groups a person can be called a member of}}.  We form each of these dimensions by generating community structures according to a community size distribution and formation algorithm, until the total number of vertices in a dimension equals the total population.  We then randomly assign individuals to one single community in each dimension, and then ``flatten'' the resulting graph by merging any edges that are duplicated across dimensions.
+For our simulation, we assume that each of the background individuals is a member of three independent community ``dimensions''\todoCP{could this assumption be informed? I'm making it for simplicity, but I think its plausible that someone has done research about people's group identities, the extent to which those are non-indepedent, and concluded about the range of independent groups a person can be called a member of}.  We form each of these dimensions by generating community structures according to a community size distribution and formation algorithm, until the total number of vertices in a dimension equals the total population.  We then randomly assign individuals to one single community in each dimension, and then ``flatten'' the resulting graph by merging any edges that are duplicated across dimensions.
 
 To form a community, we sample the size distribution to determine community size.  We then form completely connected triads up to that size, adding the potentially remaining 1 or 2 vertices to triad (or two) and forming a completely connected quartet.  We then take these cliques 3 at a time, and treating them like vertices, form more completely connected triads by choosing a random member for each clique to bidirectionally connect (left over cliques are treated similarly to left over vertices).  This joining proceeds iteratively until there are fewer than three objects at a scale to connect.  We then consider each unjoined pair of vertices and form a directed link with low probability $r_p$.
 
