@@ -58,9 +58,16 @@ As such, what these filters call for is testing and validation.  Calling field t
 
 Generating synthetic data seems like the obvious alternative.  It allows for comparison across detection strategies, experimentation with the clandestine group's tactics, forecasting of risks and tradeoffs in a way that allows uncertainties, and in general providing a framework for situational assessment.  However, such a tool has subtle downsides; if one believes a particular strategy is effective -- perhaps even with reasonable evidence for a particular time and situation -- the would be a natural tendency to ``adjust'' scenarios until they indicated the success of strategy.
 
-In the following sections, we layout the uses and abuses of such a framework.  What makes for useful synthetic data sets? What are the appropriate measures for detection strategies on them?
+In the following sections, we layout the uses and abuses of such a framework.  What makes for useful synthetic data sets? What are the appropriate measures for detection strategies on them?  We motivate that discussion by referencing a simple model of terrorism -- the Salafi jihad networks as described by Sageman {\em et al.}\cite{sageman} -- though we will point out where assumptions can be modified to identify different kinds of groups against a background population, since the tactics of these organizations are constantly evolving. 
 
-As such, we will use the extant evidence about Salafi jihad networks as our motivating case\cite{sageman}, though we will point out where assumptions can be modified to identify different kinds of groups against a background population, since the tactics of these organizations are constantly evolving. 
+\section*{Framing a Covert Network Detection Assessment}
+The modeling problem requires describing and representing several aspects.
+\subsection{General Population \&\ Their Communications}
+Most communications pulled in by electronic dragnet will be those of the general populace surrounding the clandestine group.  This is an inevitable outcome of pursuing these groups via this means -- the identity of the clandestine group is, by definition, not known prior to the investigation.  The task is then to distinguish the clandestine group from the general population for non-trivial cases.  What makes the task non-trivial?  The complexity and amount of general traffic make it a computationally non-trivial problem, certainly, but there are also more pernicious theoretical problems.  The target population's structure is initially unknown, as are their communication habits, and may be shifting over the timescale of the investigation -- indeed, possibly in response to the investigation.  Moreover, different investigations may have fundamentally different access to communication bands, providing   This is not a simple color of ``noise'' that can be filtered away to leave only the clandestine signal.  Indeed, there is no compelling, general theoretical description of the form noise.
+
+
+\subsection{Covert Actors \&\ Their Communications}
+
 
 \section*{Model}
 Sageman, Qin, et al. describe the structure of the Salafi networks as comprising a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups -- terrorist cells -- that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
