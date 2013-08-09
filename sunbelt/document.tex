@@ -63,8 +63,25 @@ In the following sections, we layout the uses and abuses of such a framework.  W
 \section*{Framing a Covert Network Detection Assessment}
 The modeling problem requires describing and representing several aspects.
 \subsection{General Population \&\ Their Communications}
-Most communications pulled in by electronic dragnet will be those of the general populace surrounding the clandestine group.  This is an inevitable outcome of pursuing these groups via this means -- the identity of the clandestine group is, by definition, not known prior to the investigation.  The task is then to distinguish the clandestine group from the general population for non-trivial cases.  What makes the task non-trivial?  The complexity and amount of general traffic make it a computationally non-trivial problem, certainly, but there are also more pernicious theoretical problems.  The target population's structure is initially unknown, as are their communication habits, and may be shifting over the timescale of the investigation -- indeed, possibly in response to the investigation.  Moreover, different investigations may have fundamentally different access to communication bands, providing   This is not a simple color of ``noise'' that can be filtered away to leave only the clandestine signal.  Indeed, there is no compelling, general theoretical description of the form noise.
+Most communications pulled in by electronic dragnet will be those of the general populace surrounding the clandestine group.  This is an inevitable outcome of pursuing these groups via this means -- the identity of the clandestine group is, by definition, not known prior to the investigation.  The task is then to distinguish the clandestine group from the general population for non-trivial cases.  What makes the task non-trivial?  The complexity and amount of general traffic make it a computationally non-trivial problem, certainly, but there are also more pernicious theoretical problems.  The target population's structure is initially unknown, as are their communication habits, and may be shifting over the timescale of the investigation -- indeed, possibly in response to the investigation.  With the confirmation of activities by the NSA that were formerly considered to be in the realm of tinfoil haberdashery, the technical elite, and perhaps even the general public, will modify their communications.  Finally, different investigations may have fundamentally different access to communication bands, providing different types of information.
 
+All of that is to say, there is no simple color of ``noise'' that can be analytically filtered away to leave only the clandestine signal.  It may be the case that there will never be such a phenomena.  Acknowledging this, any test of an investigative tool must address this messy background.  This means synthetically generating the background structure and the communications on that structure, and with many different models since it is unlikely that any given approach will validate well against more than a few reasonable measures.
+
+For our motivating example, we generated a background population structure based on the following model:
+
+\begin{itemize}
+\item individuals have relationships in three ``dimensions'' - Family, Religious, and Economic
+\item ``Communities'' are constructed around the Family and Economic dimensions by assembling a graph from cliques, then cliques of cliques ad nauseum, and finally some random reshuffling.  These dimensions are determined independently
+\item The Religious dimension is determined by correlation with the Family dimension shortest paths.  The shorter the path length, the more likely individuals are to connect along the Religious dimension
+\end{itemize}
+
+Why those three dimensions?  Why only three?  Why form communities that way?
+
+We do not see data to support fitting graph structural parameters much beyond a single dimension, and adding more parameters introduces the subtle danger of providing too many degrees of freedom.
+
+However, we wished to demonstrate framing the problem with a not-too-simplistic model, and one that has pieces that could be individually measured.  But we emphasize again: the background population is a chameleon.  No strategy should be evaluated against a single model of the background population -- you do not know what mechanism gives rise to that population structure, and the parameters you have for the mechanisms you believe apply are wrong.
+
+This background population then communicates
 
 \subsection{Covert Actors \&\ Their Communications}
 
