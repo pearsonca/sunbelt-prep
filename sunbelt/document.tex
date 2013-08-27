@@ -4,7 +4,7 @@
 
 % PLOS One TEMPLATE
 \usepackage{amsmath,amssymb,graphicx,cite,setspace}
-\usepackage[textwidth=1.75in,disable]{todonotes}
+\usepackage[textwidth=1.75in]{todonotes}
 \usepackage[total={6in,9.5in},top=0.5in,left=0.5in,includefoot]{geometry}
 %\doublespacing
 
@@ -77,12 +77,16 @@ As an example background population, we have the ordinary individuals form small
 
 Independently, we establish a second set of edges with a different flavor.  The previously described edges we label ``Familial'', these we call ``Economic''.  We will generate these in an identical fashion.  Again, if one were inclined to propose an explanation, one might call these small businesses or groups within a business, those forming collaborating businesses or whole firms, and so on hierarchically.  Again, we emphasize: this choice is purely an academic fiction, where we have added this extra fiction purely to highlight the need for multiple dimensions to represent different kinds of relationships in the population.
 
-For both of these types, the ``grouping'' operation is to try to form cliques of size $n=3$ (with some allowances to handle an arbitrary total population size).  That is:\begin{enumerate}
+For both of these types, the ``grouping'' operation is to try to form cliques of size $n$ (with some allowances to handle an arbitrary total population size).  That is:\begin{enumerate}
 \item\label{grouping_init} divide the population $P_0$ into equal groups of size $n$, randomly assorting them;
 \item for each group $i$, completely connect the individuals, and label that group $C_i^0$
 \item\label{grouping_end} form a population from the $C_i^0$
 \item repeat steps \ref{grouping_init} to \ref{grouping_end} with the $C_i^0$ connecting each edge between the $C_i^0$ to a uniformly drawn individual within the group, then with the $C_i^1$, etc until a single component is obtained
 \end{enumerate}
+
+\missingfigure{Show results for $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for $n=5$, pop of 100, 1000, 10000}
 
 Lastly for this model, we establish a final set of edges with a third flavor: ``Religious''.  These edges occur between members with a probability based the distance between the individuals on the ``Familial'' graph.  That is -- for those wanting to assign a meaning -- members of the same family are most likely to observably interact in a religious capacity, then immediate relatives or neighbors, and so on.  Of course, this is again only a convenient fiction, chosen to illustrate that other generation algorithms are possible, even with dependence between dimensions.  The detailed algorithm is:\begin{enumerate}
 \item\label{religious_init} for each individual $i$:
@@ -92,7 +96,11 @@ Lastly for this model, we establish a final set of edges with a third flavor: ``
 \item repeat steps \ref{religious_init} to \ref{religious_end} until $F_i$ has no members added in step \ref{religious_end} 
 \end{enumerate}
 
-We also consider an alternative background: individuals form trees for ``Familial'' and ``Economic'' ties, and then unconnected cliques for ``Religious'' ties.
+We also consider an alternative background: individuals form trees for ``Familial'' and ``Economic'' ties, and then unconnected cliques for ``Religious'' ties.  The trees have a similar $n$ parameter for branching.
+
+\missingfigure{Show results for $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for $n=5$, pop of 100, 1000, 10000}
 
 \subsubsection*{Covert Actors}
 Sageman, Qin, et al. describe the structure of the Salafi networks as comprising a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups -- terrorist cells -- that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
@@ -108,78 +116,166 @@ We also consider an alternative model: $M$ joins the background population as de
 \subsection*{Modeling Action \&\ Observation}
 Our proposed types have differences in their structural organization, but we also use those types to distinguish activity by those types on their related structure.  In this assessment, we represent activity only as monitorable communications, and those communications have their content flattened into two categories: ``Good'' and ``Bad''.  This is obviously a gross simplification of individual behavior (or over-estimation of analyst categorization capabilities); a potentially more appropriate version would be to have an abstract vocabulary with usage distinctions between the background and the clandestine group (e.g., uniform use in the background versus enriched in a subset in the clandestine group).  However, as we no doubt boringly emphasize: there is no particular basis for informing this model.  A time and group sensitive partitioning of intercepts for variety and distribution could plausibly form a basis for such a fit; one would have to consider, however, the distinction between the open source background communications (i.e., generally known to be public) versus the intercepted communications of the clandestine group (generally assumed private).
 
+One last technical issue before proceeding to our example implementation: activity models may obviously differ in the data they generate, both structurally and semantically.  The underlying masking and investigating strategies may be framed relative to a particular action model, which may then require an adaptation of the activity data to be consistent with those adjacent models.
+
+\subsubsection*{Background Action}
+Each simulation time step, individuals in the background population generate messages by binomially sampling from all of their available connections.  They exhibit no preference for the type of those connections (beyond the structural consequence of having different numbers of different types).  If one interprets each message as a whole conversation, initiated by the sending party, then one implication of this model is that their messaging activity occupies an inconsequential period of real time relative to the real time equivalent of simulation step.  If one believed it was useful to model conversations explicitly -- i.e., each message is a word or phrase -- then one obvious change would be that individuals would only be selecting one target at a time, as well as modeling the speaker switch versus terminating communication.  This highlights a previously mentioned problem for the observation strategy -- there must exist an adapter for strategies between data types.  In this proposed continuous model, the aggregation for a strategy that only considers whole messages might be to average (on some specific real time scale) the total vocabulary in each direction of the conversation and then send one message from each party.
+
+As for message content, the background population sends ``Good'' messages with a higher probability than ``Bad'' messages.
+
+\subsubsection*{Covert Action}
+The clandestine group's manager, $M$, behaves much like background population relative to his non-``Plot'' edges.  His tendency to send ``Bad'' messages to the background population is defined relative to the background probability.
+
+However, he additionally sends direction to the subordinate group via the ``Plot'' connections with some probability.  Presumably, he would balance execution rate with secrecy.
+
+The subordinates, however, do not interact with the background population.  They randomly speak with each other, with an enhanced probability of sending ``Bad'' messages after having received them from another member of the clandestine group.
+
+\subsection*{Modeling Observation}
+Incomplete information is the norm in these investigations, much like any work in the non-physical sciences.  However, it is typically possible to modulate what information is available (by investing more resources, by redirecting assets, etc).  We do not illustrate any strategies for either side in terms of modulating the flow of information, though an obvious addition dimension to add to both parties would be some resource pool that can be applied to modifying what information arrives at the observer (e.g., modulating the probability of detecting ``Bad'' messages from the covert group, faking messages in the background or to suspect members of the clandestine group).  For our simple model, we have different detection rates for the various edge flavors: ``Economic'' being highest, then ``Religious'', then ''Familial'', then ''Plot''.  The type of edge used to transmit the message is also not disclosed.
+
 \subsection*{Modeling Reaction}
+We rate investigating entities that implement a few different strategies.  One strategy is purely structural based on degrees, another purely content-oriented based on ``Bad'' frequency, and the third mixes the first two.
 
-\section*{Model}
-Sageman, Qin, et al. describe the structure of the Salafi networks as comprising a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups -- terrorist cells -- that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
+\subsubsection*{Structural Strategy}
+Structural identification strategies range from having strong prior belief about a particular feature -- e.g., degree distribution -- and a relatively simple detection computation to belief only that there is a meaningful structural distinction (and a covert group to detect at all), thus running up against practical computational considerations trying to analyze all possible distinctions.
 
-To represent the three components -- the background population, the lieutenants, the subordinate clusters -- we generate the graph from clusters with the features of each of these.  Vertices are people ($\mathbf{P}=\{P_1, P_2, \ldots P_k\}, n(\mathbf{P})=k$), with a directed edge from $P_i$ to $P_j$ if person $i$ initiates communication with person $j$.  Communication takes the form of messages of a simplified sort: a binary ``good'' or ``bad'' signal.  Full instructions from a lieutenant to the subordinate groups that will implement a terrorist event consist of a cumulation of several “bad” signals. Additionally, “bad” signals can be transmitted by anyone in the general population, though these play no role in the plot.
+We demonstrate a case of the former, positing that the unique structural feature is to do with degree distribution -- specifically, a relatively high degree distribution for the manager, a relatively low degree distribution for the subordinates, and connection between them.  The criteria for labeling a member of the covert group is then a matter of setting what slices of the distribution to take from the top and bottom, and then testing for an observed path between the manager and the subordinate.
 
-In the following sections, we provide the details of generating the groups, assembling them into a whole, and finally their communication behavior.  For our simulations, we focus on a population that contains a single lieutenant coordinating multiple subordinate clusters, though we acknowledge that more realistic scenarios would typically entail tracking multiple plotting groups.
+\subsubsection*{Content Strategy}
+A pure content strategy ignores details about sender and receiver arrangement, instead focusing on the sending and receiving of different types of messages.  For our simple model, we consider a strategy that measures relative in and outflow of messages and the frequency of ``Bad'' messages.
 
-\subsection*{The Background Population, the $P_{n}\in\mathbf{P}$}
-Individuals in the background population are members of multiple communities, divided among multiple dimensions -- e.g., family, religion, work.  Most of these connections are bi-directional.
+\subsubsection*{Combination Strategy}
+For our example combination strategy, we simply require individuals pass both threshold measures.
 
-For our simulation, we assume that each of the background individuals is a member of three independent community ``dimensions''\todoCP{could this assumption be informed? I'm making it for simplicity, but I think its plausible that someone has done research about people's group identities, the extent to which those are non-indepedent, and concluded about the range of independent groups a person can be called a member of}.  We form each of these dimensions by generating community structures according to a community size distribution and formation algorithm, until the total number of vertices in a dimension equals the total population.  We then randomly assign individuals to one single community in each dimension, and then ``flatten'' the resulting graph by merging any edges that are duplicated across dimensions.
+\section*{Evaluation}
+There are two basic aspects of evaluation, which correspond to the general scientific method questions of model fitting versus model selection.  Note that these are entirely separate from detailed application of these aspects to particular model components; those activities are certainly critical in narrow assessments, but we must again emphasize the ability of both sides to adapt their strategies, improve technological capabilities, and so on, all of which will present disruptive changes to any established model.
 
-To form a community, we sample the size distribution to determine community size.  We then form completely connected triads up to that size, adding the potentially remaining 1 or 2 vertices to triad (or two) and forming a completely connected quartet.  We then take these cliques 3 at a time, and treating them like vertices, form more completely connected triads by choosing a random member for each clique to bidirectionally connect (left over cliques are treated similarly to left over vertices).  This joining proceeds iteratively until there are fewer than three objects at a scale to connect.  We then consider each unjoined pair of vertices and form a directed link with low probability $r_p$.
+The aspect which corresponds to questions of fit is basically identifying, for a particular model context -- specific combination of opposed strategies and background activity -- parameter surfaces for optimal performance on the chosen metrics.
 
-\subsection*{A Lieutenant, the \Hub\ Vertex}
-\Hub\ has community affiliations like most members of the population.  However, \Hub\ is a member of more communities than the typical individual in the population given the need to gather information, identify recruits, etc.  Finally, \Hub\ is completely connected to the members of the clusters, but those connections are only directed from \Hub\ to the cluster members.
+The question of model selection corresponds more to considering these performance surfaces across a wide breadth of combinations.  That is, how well does a particular covert strategy perform across multiple background population behaviors and against varying investigatory capabilities?  Vice versa for the investigatory system?
 
-\Hub\ is added to a number of communities sampled from a distribution and then randomly connected with members in that community with probability $c_o$ (to that member) and $c_i$ (from that member).  This distribution and these probabilities should be set relative to background population connection structures such that the \Hub\ is a high outlier for both the in and out degree distributions of the population.\footnote{{\bf TODO what distribution? math to enforce prob limits?}}
+For our toy systems we consider a simple performance metric, the Receiver Operator Characteristic discrimination statistic, across a background parameter sweep and as a function of time duration. 
 
-\subsection*{The Subordinates, $C_i\in\mathbf{C}$}
-Each $C_i$ is a bi-direction clique, comprising a small number of individuals.  In our simulations, we sample from a binomial clique size.  The $C_i$ have no other structured communication channels.
+\subsection*{Structural Performance}
+\subsubsection*{Covert Group Organized Like Population}
+\missingfigure{Show results for clique+clique, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+clique, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+clique, $n=5$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=5$, pop of 100, 1000, 10000}
+\subsubsection*{Covert Group Organized Unlike Population}
+\missingfigure{Show results for clique+tree, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+tree, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+tree, $n=5$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=5$, pop of 100, 1000, 10000}
 
-\subsection*{Message Passing Behavior}
-\Obs\ understands the network by monitoring message traffic between individuals.  For this analysis, we consider messages with binary state only: the message is either ``good'' or ``bad''.
+\subsection*{Content Performance}
+\subsubsection*{Covert Group Organized Like Population}
+\missingfigure{Show results for clique+clique, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+clique, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+clique, $n=5$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=5$, pop of 100, 1000, 10000}
+\subsubsection*{Covert Group Organized Unlike Population}
+\missingfigure{Show results for clique+tree, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+tree, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+tree, $n=5$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=5$, pop of 100, 1000, 10000}
 
-The background population generate these messages according to simplifying assumptions about the real world: they have no preference for their community memberships beyond how many members of a community they connect to, their messaging activity occupies an inconsequential period of time during any iteration, and the iteration time is such that multiple real events (e.g., a few calls between individuals) can be treated as a single continuous event.  Thus, during each iteration, each individual $P_i\notin\C{n}\cap\Hub$ (1) activates its out degrees with probability $\rho_m$ -- {\em i.e.}, a person does a binomial sample of the available channels -- and then (2), $P_i$ sends a single message to each active channel.  These messages are ``bad'' with a low probability $p_b$.
-
-{\bf TODO} equations for $P_i$ outgoing messages, probability of sending a bad one.
-
-Like the $P_i$, \Hub\ abides by the simplifying assumptions about the real world, with one small perturbation.  \Hub\ is a member of many communities, and strategically cultivates and exploits these memberships.  To model that, \Hub\ will send at least one message to each community he is in, and possibly more.  So, for each community \Hub\ is a member of, \Hub\ sends $1+{n\choose k_i-1}$ messages, where $k_i$ is the number of connections \Hub\ has within that community.\footnote{{\bf TODO: good vs. badness of these messages? Original: ``These messages will always be ``good'' messages.'' but certainly if he's actively recruiting, or testing the waters, or looking to gather sensitive intel, etc. these could all be ``bad'' messages.}}
-
-Any given iteration, \Hub\ may also issue directives to the subordinate groups.  These messages will always be ``bad'' messages, but (1) are sent with low probability $h_b$ and (2) are sent to only one member of any particular $C_i$, since any $C_i$ member can be assumed to instantly disperse this information to the others.
-
-{\bf TODO} equations for \Hub\ outgoing messages, probability of sending a bad one.
-
-The members of each $C_i$ are largely ``silent'' -- which is to say, their communication is direct and is largely untraceable.  Rarely, however, they will break their direct communication discipline, or otherwise be observed to interact.  Each iteration, they may communicate with one other member of their $C_i$ (chosen uniformly) with low probability $c_m$; these messages have a relatively high probability of being ``bad'', $c_b$.  If any member of the clique received a message from \Hub\ the previous iteration, one member (chosen uniformly) may communicate a bad message to another $C_j$ (which $j$ chosen uniformly, which member of $C_j$ chosen uniformly) with probability $c_o$.  This models the largely untraceable communication among members in a $C_i$ and between $C_j$'s.
-
-{\bf TODO} equations for $C_i$ outgoing messages.
-
-Finally, there is a low probability $\rho_r$ of an individual sending a random message to an individual they do {\em not} have an outgoing link to each iteration. For each individual that will send one of these messages, they recipient is selected uniformly from the candidate recipients.
-
-{\bf TODO} equation
-
-\section*{Observers}
-A particular \Obs, for a particular scenario, only observes the message traffic as it comes along.  \Obs\ does directly see any structural features of the population graph, nor does \Obs\ know certainly when messages are among normal individuals or the plotters, let alone within a particular community.  Different \Obs's may make different assumptions about these features, and use those features to target their monitoring and even adjust their beliefs about those features according to the message traffic that occurs.
-
-For all of the strategies we consider, our \Obs's make some limiting assumptions consistent with those we put in the model, specifically that there is a single \Hub, connected to multiple $C_i$.  The \Obs\ knows that both the plotters and background population can send ``bad'' messages.
-
-Additionally, \Obs\ makes other assumptions about the structure of background communities, the messaging rate of various parties, and other features of the graph.  These assumptions are not necessarily correct, but \Obs\ still makes them as starting guess.
-
-\subsection*{Strategy 1}
-
-\subsection*{Strategy 2}
-
-\subsection*{Strategy n}
-
-\section*{Results Ignoring Decoys}
-
-\section*{Considering Decoys}
-There are two fundamental sorts of deception available in the model: deception by $\Hub\cap\mathbf{C}$ and deception by \Obs.  Deception by the plotters includes sending ``bad'' messages to the background, and, assuming the background is sympathetic, having those bad messages echoed along. Or forging bad messages between members of the background.  Deception by \Obs\ entails forging messages from a false \Hub, in hopes of hitting one of the $C_i$ and seeing them respond accordingly.
+\subsection*{Combination Performance}
+\subsubsection*{Covert Group Organized Like Population}
+\missingfigure{Show results for clique+clique, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+clique, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+clique, $n=5$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+tree, $n=5$, pop of 100, 1000, 10000}
+\subsubsection*{Covert Group Organized Unlike Population}
+\missingfigure{Show results for clique+tree, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+tree, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for clique+tree, $n=5$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=3$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=4$, pop of 100, 1000, 10000}
+\missingfigure{Show results for tree+clique, $n=5$, pop of 100, 1000, 10000}
 
 \section*{Discussion}
-
-\section*{Appendices}
-
-\subsection*{Parametrizing the Graph}
-{\bf TODO} a-b-c calculation to tune to afghan cell phone data or other parameter studies?
-
-\subsection*{Implementation, the DarkNet API, and Extension}
-{\bf TODO} description of software package.  where to get source, how to write extensions.  Propose some extensions: give individuals a vocabulary assigned from a distribution, have them randomly assemble messages from the vocabulary, some ``words'' of which are ``bad''.  Allow multiple communication channel types.  Include a community dimension and have ``within community X'' as part of the message information.
+\todoCP{Get figures to give some direction for this.  Probably going to see the interesting stuff in the differently organized pops.}
+%\section*{Model}
+%Sageman, Qin, et al. describe the structure of the Salafi networks as comprising a few key individuals with links to a large group of lieutenants -- the middle management of terror -- that are each connected to several tightly clustered subordinate groups -- terrorist cells -- that execute plots.  The lieutenants typically integrate with the regular population, while the subordinate groups are largely cloistered.
+%
+%To represent the three components -- the background population, the lieutenants, the subordinate clusters -- we generate the graph from clusters with the features of each of these.  Vertices are people ($\mathbf{P}=\{P_1, P_2, \ldots P_k\}, n(\mathbf{P})=k$), with a directed edge from $P_i$ to $P_j$ if person $i$ initiates communication with person $j$.  Communication takes the form of messages of a simplified sort: a binary ``good'' or ``bad'' signal.  Full instructions from a lieutenant to the subordinate groups that will implement a terrorist event consist of a cumulation of several “bad” signals. Additionally, “bad” signals can be transmitted by anyone in the general population, though these play no role in the plot.
+%
+%In the following sections, we provide the details of generating the groups, assembling them into a whole, and finally their communication behavior.  For our simulations, we focus on a population that contains a single lieutenant coordinating multiple subordinate clusters, though we acknowledge that more realistic scenarios would typically entail tracking multiple plotting groups.
+%
+%\subsection*{The Background Population, the $P_{n}\in\mathbf{P}$}
+%Individuals in the background population are members of multiple communities, divided among multiple dimensions -- e.g., family, religion, work.  Most of these connections are bi-directional.
+%
+%For our simulation, we assume that each of the background individuals is a member of three independent community ``dimensions''\todoCP{could this assumption be informed? I'm making it for simplicity, but I think its plausible that someone has done research about people's group identities, the extent to which those are non-indepedent, and concluded about the range of independent groups a person can be called a member of}.  We form each of these dimensions by generating community structures according to a community size distribution and formation algorithm, until the total number of vertices in a dimension equals the total population.  We then randomly assign individuals to one single community in each dimension, and then ``flatten'' the resulting graph by merging any edges that are duplicated across dimensions.
+%
+%To form a community, we sample the size distribution to determine community size.  We then form completely connected triads up to that size, adding the potentially remaining 1 or 2 vertices to triad (or two) and forming a completely connected quartet.  We then take these cliques 3 at a time, and treating them like vertices, form more completely connected triads by choosing a random member for each clique to bidirectionally connect (left over cliques are treated similarly to left over vertices).  This joining proceeds iteratively until there are fewer than three objects at a scale to connect.  We then consider each unjoined pair of vertices and form a directed link with low probability $r_p$.
+%
+%\subsection*{A Lieutenant, the \Hub\ Vertex}
+%\Hub\ has community affiliations like most members of the population.  However, \Hub\ is a member of more communities than the typical individual in the population given the need to gather information, identify recruits, etc.  Finally, \Hub\ is completely connected to the members of the clusters, but those connections are only directed from \Hub\ to the cluster members.
+%
+%\Hub\ is added to a number of communities sampled from a distribution and then randomly connected with members in that community with probability $c_o$ (to that member) and $c_i$ (from that member).  This distribution and these probabilities should be set relative to background population connection structures such that the \Hub\ is a high outlier for both the in and out degree distributions of the population.\footnote{{\bf TODO what distribution? math to enforce prob limits?}}
+%
+%\subsection*{The Subordinates, $C_i\in\mathbf{C}$}
+%Each $C_i$ is a bi-direction clique, comprising a small number of individuals.  In our simulations, we sample from a binomial clique size.  The $C_i$ have no other structured communication channels.
+%
+%\subsection*{Message Passing Behavior}
+%\Obs\ understands the network by monitoring message traffic between individuals.  For this analysis, we consider messages with binary state only: the message is either ``good'' or ``bad''.
+%
+%The background population generate these messages according to simplifying assumptions about the real world: they have no preference for their community memberships beyond how many members of a community they connect to, their messaging activity occupies an inconsequential period of time during any iteration, and the iteration time is such that multiple real events (e.g., a few calls between individuals) can be treated as a single continuous event.  Thus, during each iteration, each individual $P_i\notin\C{n}\cap\Hub$ (1) activates its out degrees with probability $\rho_m$ -- {\em i.e.}, a person does a binomial sample of the available channels -- and then (2), $P_i$ sends a single message to each active channel.  These messages are ``bad'' with a low probability $p_b$.
+%
+%{\bf TODO} equations for $P_i$ outgoing messages, probability of sending a bad one.
+%
+%Like the $P_i$, \Hub\ abides by the simplifying assumptions about the real world, with one small perturbation.  \Hub\ is a member of many communities, and strategically cultivates and exploits these memberships.  To model that, \Hub\ will send at least one message to each community he is in, and possibly more.  So, for each community \Hub\ is a member of, \Hub\ sends $1+{n\choose k_i-1}$ messages, where $k_i$ is the number of connections \Hub\ has within that community.\footnote{{\bf TODO: good vs. badness of these messages? Original: ``These messages will always be ``good'' messages.'' but certainly if he's actively recruiting, or testing the waters, or looking to gather sensitive intel, etc. these could all be ``bad'' messages.}}
+%
+%Any given iteration, \Hub\ may also issue directives to the subordinate groups.  These messages will always be ``bad'' messages, but (1) are sent with low probability $h_b$ and (2) are sent to only one member of any particular $C_i$, since any $C_i$ member can be assumed to instantly disperse this information to the others.
+%
+%{\bf TODO} equations for \Hub\ outgoing messages, probability of sending a bad one.
+%
+%The members of each $C_i$ are largely ``silent'' -- which is to say, their communication is direct and is largely untraceable.  Rarely, however, they will break their direct communication discipline, or otherwise be observed to interact.  Each iteration, they may communicate with one other member of their $C_i$ (chosen uniformly) with low probability $c_m$; these messages have a relatively high probability of being ``bad'', $c_b$.  If any member of the clique received a message from \Hub\ the previous iteration, one member (chosen uniformly) may communicate a bad message to another $C_j$ (which $j$ chosen uniformly, which member of $C_j$ chosen uniformly) with probability $c_o$.  This models the largely untraceable communication among members in a $C_i$ and between $C_j$'s.
+%
+%{\bf TODO} equations for $C_i$ outgoing messages.
+%
+%Finally, there is a low probability $\rho_r$ of an individual sending a random message to an individual they do {\em not} have an outgoing link to each iteration. For each individual that will send one of these messages, they recipient is selected uniformly from the candidate recipients.
+%
+%{\bf TODO} equation
+%
+%\section*{Observers}
+%A particular \Obs, for a particular scenario, only observes the message traffic as it comes along.  \Obs\ does directly see any structural features of the population graph, nor does \Obs\ know certainly when messages are among normal individuals or the plotters, let alone within a particular community.  Different \Obs's may make different assumptions about these features, and use those features to target their monitoring and even adjust their beliefs about those features according to the message traffic that occurs.
+%
+%For all of the strategies we consider, our \Obs's make some limiting assumptions consistent with those we put in the model, specifically that there is a single \Hub, connected to multiple $C_i$.  The \Obs\ knows that both the plotters and background population can send ``bad'' messages.
+%
+%Additionally, \Obs\ makes other assumptions about the structure of background communities, the messaging rate of various parties, and other features of the graph.  These assumptions are not necessarily correct, but \Obs\ still makes them as starting guess.
+%
+%\subsection*{Strategy 1}
+%
+%\subsection*{Strategy 2}
+%
+%\subsection*{Strategy n}
+%
+%\section*{Results Ignoring Decoys}
+%
+%\section*{Considering Decoys}
+%There are two fundamental sorts of deception available in the model: deception by $\Hub\cap\mathbf{C}$ and deception by \Obs.  Deception by the plotters includes sending ``bad'' messages to the background, and, assuming the background is sympathetic, having those bad messages echoed along. Or forging bad messages between members of the background.  Deception by \Obs\ entails forging messages from a false \Hub, in hopes of hitting one of the $C_i$ and seeing them respond accordingly.
+%
+%\section*{Discussion}
+%
+%\section*{Appendices}
+%
+%\subsection*{Parametrizing the Graph}
+%{\bf TODO} a-b-c calculation to tune to afghan cell phone data or other parameter studies?
+%
+%\subsection*{Implementation, the DarkNet API, and Extension}
+%{\bf TODO} description of software package.  where to get source, how to write extensions.  Propose some extensions: give individuals a vocabulary assigned from a distribution, have them randomly assemble messages from the vocabulary, some ``words'' of which are ``bad''.  Allow multiple communication channel types.  Include a community dimension and have ``within community X'' as part of the message information.
 
 %  Our simulation tool allows for multiple edges from one vertex to another, representing multiple avenues of communication, subject to different levels of monitoring.  In these analyses, we do not exploit having multiple edges between individuals, and only use this capability to distinguish between monitored and unmonitored channels.  
 
