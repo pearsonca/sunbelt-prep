@@ -1,11 +1,43 @@
-%%This is a very basic article template.
-%%There is just one section and two subsections.
 \documentclass{article}
 
 % PLOS One TEMPLATE
 \usepackage{amsmath,amssymb,graphicx,cite,setspace}
 \usepackage[textwidth=1.75in]{todonotes}
 \usepackage[total={6in,9.5in},top=0.5in,left=0.5in,includefoot]{geometry}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{color}
+
+% define Scala
+\lstdefinelanguage{scala}{morekeywords={class,object,trait,extends,with,new,if,while,for,def,val,var,this},
+otherkeywords={->,=>},
+%procnamekeys={def,.},
+sensitive=true,
+keywordstyle=\color{magenta},
+commentstyle=\color{green},
+identifierstyle=\color{blue},
+%procnamestyle=\color{black},
+morecomment=[l]{//},
+morecomment=[s]{/*}{*/},
+morestring=[b]"}
+% Default settings for code listings
+\lstset{frame=tb,language=scala,aboveskip=3mm,belowskip=3mm,
+showstringspaces=false,columns=flexible,basicstyle={\small\ttfamily}}
+% handle tilde characters
+\lstset{literate=%
+{~}{\url{~}}1
+}
+% define no break code listing
+\lstnewenvironment{code}[1][]%
+{
+   \noindent
+   \minipage{\linewidth} 
+   \vspace{0.5\baselineskip}
+   \lstset{basicstyle=\ttfamily\footnotesize,frame=single,#1}}
+{\endminipage}
+
+%\renewcommand{\lstlistingname}{Scala Code}
+
 %\doublespacing
 
 % Text layout
@@ -16,7 +48,6 @@
 %\textheight 21cm
 
 \usepackage[labelfont=bf,labelsep=period,justification=raggedright]{caption}
-%%%%%%%
 
 \newcommand{\Hub}[0]{\ensuremath{\mathbf{H}}}
 \newcommand{\C}[1]{\ensuremath{\mathbf{C}_{#1}}}
@@ -84,6 +115,36 @@ For both of these types, the ``grouping'' operation is to try to form cliques of
 \item repeat steps \ref{grouping_init} to \ref{grouping_end} with the $C_i^0$ connecting each edge between the $C_i^0$ to a uniformly drawn individual within the group, then with the $C_i^1$, etc until a single component is obtained
 \end{enumerate}
 
+\begin{code}[title=Pseudo-Code: Hierarchical Cliques]
+// form a clique from a vertex collection, col:
+def clique(col : Collection[V]) =
+    for ( (left, right) <- undirectedPairs(col) ) // for each unique, undirected pair in col:
+      left <~> right // form a bidirectional edge across the pair
+      
+def hierarchicalClique(col: Collection[V], size:Int) = 
+   val thisLvl : Collection[Collection[V]] =
+     // make the lowest level cliques 
+     for ( subGroup <- groupBySize(col, size) ) yield {
+       clique(subGroup)
+       subGroup
+     }
+   cliqueGroups(thisLvl, size)
+   
+@recursive def cliqueGroups(col: Collection[Collection[V]], size:Int) =
+  val thisLvl : Collection[Collection[V]] =
+    // gather the groups being made into a higher level cliques
+    for ( subGroups <- groupBySize(col, size) ) yield {
+      // clique a group of groups
+      for ( (leftGroup, rightGroup) <- undirectedPairs(subGroup) ) {
+        leftGroup.randomMember <~> rightGroup.randomMember
+      }
+      // merge this set of subgroups into a single new group
+      merge(subGroups)
+    }
+  // repeat with the cliqued cliques, unless everything has been connected
+  if (thisLvl.size != 1) cliqueGroups(thisLvl, size)  
+\end{code}
+
 \missingfigure{Show results for $n=3$, pop of 100, 1000, 10000}
 \missingfigure{Show results for $n=4$, pop of 100, 1000, 10000}
 \missingfigure{Show results for $n=5$, pop of 100, 1000, 10000}
@@ -96,7 +157,7 @@ Lastly for this model, we establish a final set of edges with a third flavor: ``
 \item repeat steps \ref{religious_init} to \ref{religious_end} until $F_i$ has no members added in step \ref{religious_end} 
 \end{enumerate}
 
-We also consider an alternative background: individuals form trees for ``Familial'' and ``Economic'' ties, and then unconnected cliques for ``Religious'' ties.  The trees have a similar $n$ parameter for branching.
+We also consider an alternative background: individuals form trees for ``Familial'' and ``Economic'' ties, and then the same treatment for ``Religious'' ties.  The trees have a similar $n$ parameter for branching, and form bidirectional links.  This is obviously less sophisticated than the aforementioned hierarchical structures.  Is it less plausible as well?  Certainly, it seems off relative to, say, a NATO country: no interaction loops in a particular social context seems unimaginable.  Perhaps this is more reasonable in a setting where there is less information technology penetration or less observable interaction.  Perhaps its more plausible if the trees instead had siblings form cliques as well.  All of that is supposition: we picked another academic fiction to compare with our previous one.
 
 \missingfigure{Show results for $n=3$, pop of 100, 1000, 10000}
 \missingfigure{Show results for $n=4$, pop of 100, 1000, 10000}
